@@ -1,0 +1,11 @@
+$Shell = New-Object -ComObject WScript.Shell
+
+$Shortcut = $Shell.CreateShortcut(
+    "$env:USERPROFILE\Desktop\WebServer.lnk"
+)
+
+$Shortcut.TargetPath = "C:\Users\Admin\AppData\Local\Microsoft\WindowsApps\python3.exe"
+$Shortcut.Arguments = "-m http.server 8000"
+$Shortcut.WorkingDirectory = "C:\Users\Admin\ollama_ai\web"
+$Shortcut.Description = "Start Python Web Server"
+$Shortcut.Save()
