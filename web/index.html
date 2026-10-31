@@ -9,6 +9,10 @@
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
+  <!-- Markdown rendering: marked converts, DOMPurify removes anything unsafe -->
+  <script src="https://unpkg.com/marked@12.0.2/marked.min.js"></script>
+  <script src="https://unpkg.com/dompurify@3.1.6/dist/purify.min.js"></script>
+
   <style>
     * { box-sizing: border-box; }
 
@@ -139,12 +143,96 @@
     }
 
     .doc-text {
-      margin: 0;
-      padding: 10px 12px;
+      padding: 4px 12px 8px;
       border-top: 1px solid #e2e8f0;
+      font-size: 14px;
+    }
+
+    /* Rendered Markdown (Gemma replies and documents) */
+    .markdown {
+      white-space: normal;
+    }
+
+    .markdown > :first-child { margin-top: 0; }
+    .markdown > :last-child { margin-bottom: 0; }
+
+    .markdown p,
+    .markdown ul,
+    .markdown ol,
+    .markdown pre,
+    .markdown table,
+    .markdown blockquote {
+      margin: 0 0 10px;
+    }
+
+    .markdown ul,
+    .markdown ol {
+      padding-left: 24px;
+    }
+
+    .markdown li { margin-bottom: 4px; }
+
+    .markdown h1,
+    .markdown h2,
+    .markdown h3,
+    .markdown h4 {
+      margin: 14px 0 8px;
+      line-height: 1.3;
+    }
+
+    .markdown h1 { font-size: 1.25em; }
+    .markdown h2 { font-size: 1.15em; }
+    .markdown h3,
+    .markdown h4 { font-size: 1.05em; }
+
+    .markdown code {
       font-family: ui-monospace, Consolas, monospace;
-      font-size: 13px;
-      white-space: pre-wrap;
+      font-size: 0.9em;
+      background: #ffffffb3;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    .markdown pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 12px;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+
+    .markdown pre code {
+      background: none;
+      padding: 0;
+      color: inherit;
+    }
+
+    .markdown table {
+      border-collapse: collapse;
+      display: block;
+      overflow-x: auto;
+    }
+
+    .markdown th,
+    .markdown td {
+      border: 1px solid #b7dcc3;
+      padding: 6px 10px;
+      text-align: left;
+    }
+
+    .markdown th { background: #d6ecdd; }
+
+    .markdown blockquote {
+      border-left: 3px solid #b7dcc3;
+      padding-left: 12px;
+      color: #475467;
+    }
+
+    .markdown a { color: #1769aa; }
+
+    .markdown hr {
+      border: 0;
+      border-top: 1px solid #b7dcc3;
     }
 
     textarea {
@@ -265,6 +353,20 @@
         options: { seed: 42, temperature: 0 }
       }
     };
+
+    // Links in rendered Markdown open in a new tab
+    DOMPurify.addHook("afterSanitizeAttributes", node => {
+      if (node.tagName === "A") {
+        node.setAttribute("target", "_blank");
+        node.setAttribute("rel", "noopener noreferrer");
+      }
+    });
+
+    // Convert Markdown to HTML, then sanitise it so any HTML or
+    // script in a model reply (or a document) cannot run in the page
+    function renderMarkdown(text) {
+      return { __html: DOMPurify.sanitize(marked.parse(text)) };
+    }
 
     // Send JSON to the local Ollama API
     async function post(endpoint, payload) {
@@ -501,7 +603,14 @@
               h("span", { className: "role" },
                 msg.role === "user" ? "You" : "Gemma"
               ),
-              msg.content,
+
+              // Your messages stay plain text; Gemma's are rendered
+              msg.role === "user"
+                ? msg.content
+                : h("div", {
+                    className: "markdown",
+                    dangerouslySetInnerHTML: renderMarkdown(msg.content)
+                  }),
 
               msg.sources && h("div", { className: "sources" },
                 h("div", { className: "sources-title" },
@@ -515,7 +624,10 @@
                         "similarity " + s.score.toFixed(3)
                       )
                     ),
-                    h("pre", { className: "doc-text" }, s.text)
+                    h("div", {
+                      className: "doc-text markdown",
+                      dangerouslySetInnerHTML: renderMarkdown(s.text)
+                    })
                   )
                 )
               )
