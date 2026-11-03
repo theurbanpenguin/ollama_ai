@@ -1,0 +1,7 @@
+List the planets
+
+
+Goal: Create a list of the planets
+Context: I am presenting to year 8 students
+Source:
+Expectations: Outputs as a table listed in order from the closest to the Sun, list the distance in AU, show the radius in KM, and include a column for an interesting fact. Just one fact per planet. Use UK English and exciting language to stimulate young minds

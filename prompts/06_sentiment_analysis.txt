@@ -1,0 +1,11 @@
+Use the following format to identify the sentiment of a customer review.
+
+Review: Normally I love Company A's products, but this one was a disappointment.
+
+Sentiment: Negative
+
+Review: Another great product from Company A!
+
+Sentiment: Positive
+
+Review: Overall, the latest product from Company A measures up to expectations.

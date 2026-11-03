@@ -1,0 +1,4 @@
+1. Ollama list
+2. Ollama show gemma2:1b-it-qat
+3. Who was the 35th president of the US
+4. List the presidents of the US who took office during the decade 1960 to 1969

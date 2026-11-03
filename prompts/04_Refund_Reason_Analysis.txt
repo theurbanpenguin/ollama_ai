@@ -1,0 +1,49 @@
+
+Zero shot
+Why is the customer asking for a refund?
+
+Complaint: The headphones stopped working
+after two days.
+Reason:
+
+
+Single Shot
+Classify the reason for each refund request.
+
+Complaint: The product was broken when it arrived.
+Reason: Defect
+
+Complaint: The headphones stopped working
+after two days.
+Reason:
+
+
+
+Few Shot
+Classify each customer complaint by its
+refund reason. Return only the reason.
+
+Complaint: The product was broken when it arrived.
+Reason: Defect
+
+Complaint: I ordered the red version but got
+the blue one instead.
+Reason: Wrong colour
+
+Complaint: I paid for next-day delivery,
+but it took a week.
+Reason: Late delivery
+
+Complaint: The shoes are too small for my feet.
+Reason: Wrong size
+
+Complaint: I was charged twice for the same order.
+Reason: Duplicate charge
+
+Complaint: The parcel arrived, but one item
+was missing.
+Reason: Missing item
+
+Complaint: The headphones stopped working
+after two days.
+Reason:
