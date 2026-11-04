@@ -1,0 +1,42 @@
+
+Evaluate the following data samples from the call logging database. Based on the issue described, I need you to classify the 
+resolution by responding with **only one of the following options**:
+
+1. **Replace Keyboard**  
+2. **Set Keyboard Language**  
+3. **Call Support**
+
+### Instructions:
+- The real issue will always be delimited with `<>` after the label "Issue".
+- Analyze the issue and determine the correct resolution based on the given examples.
+
+### Examples:
+1. Issue: When I type the £ symbol the # appears  
+   Resolution: **Set Keyboard Language**
+
+2. Issue: When I type the N key nothing happens  
+   Resolution: **Replace Keyboard**
+
+3. Issue: The system is noisy  
+   Resolution: **Call Support**
+
+4. Issue: The system does not power up  
+   Resolution: **Call Support**
+
+5. Issue: When I type the @ symbol the " appears  
+   Resolution: **Set Keyboard Language**
+
+6. Issue: The screen does not display at all  
+   Resolution: **Call Support**
+
+7. Issue: All keys are noisy  
+   Resolution: **Replace Keyboard**
+
+8. Issue: Water was spilled on the keyboard and now letters are random  
+   Resolution: **Replace Keyboard**
+
+### Response Format:
+When responding, please **use only one of the following phrases**:
+- Replace Keyboard  
+- Set Keyboard Language  
+- Call Support  
