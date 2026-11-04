@@ -1,2 +1,2 @@
-1. Demo killable system, it is slow but look at Ollama ps
+1. Demo on skillable system, it is slow but look at Ollama ps
 2. Demo local system, it is quick but demo Ollama ps

@@ -1,6 +1,3 @@
-List the planets
-
-
 Goal: Create a list of the planets
 Context: I am presenting to year 8 students
 Source:

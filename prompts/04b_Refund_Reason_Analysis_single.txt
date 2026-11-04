@@ -1,0 +1,12 @@
+
+Why is the customer asking for a refund?
+
+
+Classify the reason for each refund request.
+
+Complaint: The product was broken when it arrived.
+Reason: Defect
+
+Complaint: The headphones stopped working
+after two days.
+Reason:

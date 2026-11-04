@@ -270,6 +270,14 @@
       cursor: not-allowed;
     }
 
+    /* Name of the .txt file loaded into the prompt box */
+    .file-name {
+      align-self: center;
+      font-size: 13px;
+      color: #475467;
+      overflow-wrap: anywhere;
+    }
+
     /* Thinking indicator */
     .thinking {
       display: flex;
@@ -323,7 +331,11 @@
   <div id="root"></div>
 
   <script>
-    const { useState } = React;
+    const { useState, useRef } = React;
+
+    // Largest prompt file accepted (bytes). Keeps a huge file
+    // from freezing the page or overloading the model.
+    const MAX_FILE_SIZE = 100 * 1024; // 100 KB
     const h = React.createElement;
 
     const API = "http://127.0.0.1:11434/api";
@@ -498,6 +510,42 @@
       const [loading, setLoading] = useState(false);
       const [error, setError] = useState("");
       const [mode, setMode] = useState("precise");
+      const [fileName, setFileName] = useState("");
+
+      // Hidden <input type="file">, opened by the Browse button
+      const fileInput = useRef(null);
+
+      // Read the chosen .txt file into the prompt box.
+      // The text is not sent straight away, so it can be
+      // checked or edited first, then sent with Send.
+      async function loadPromptFile(e) {
+        const file = e.target.files[0];
+        e.target.value = ""; // lets the same file be chosen again
+        if (!file) return;
+
+        if (!file.name.toLowerCase().endsWith(".txt")) {
+          setError("Please choose a .txt file");
+          return;
+        }
+        if (file.size > MAX_FILE_SIZE) {
+          setError(file.name + " is too large (limit " +
+            MAX_FILE_SIZE / 1024 + " KB)");
+          return;
+        }
+
+        try {
+          const text = await file.text();
+          if (!text.trim()) {
+            setError(file.name + " is empty");
+            return;
+          }
+          setPrompt(text);
+          setFileName(file.name);
+          setError("");
+        } catch {
+          setError("Could not read " + file.name);
+        }
+      }
 
       async function askOllama() {
         const question = prompt.trim();
@@ -515,6 +563,7 @@
 
         setMessages(updatedMessages);
         setPrompt("");
+        setFileName("");
         setError("");
         setLoading(true);
 
@@ -557,6 +606,7 @@
       function clearChat() {
         setMessages([]);
         setPrompt("");
+        setFileName("");
         setError("");
       }
 
@@ -644,8 +694,11 @@
 
         h("textarea", {
           value: prompt,
-          placeholder: "Type your question here...",
-          onChange: e => setPrompt(e.target.value),
+          placeholder: "Type your question here, or Browse for a .txt file...",
+          onChange: e => {
+            setPrompt(e.target.value);
+            if (!e.target.value) setFileName("");
+          },
           onKeyDown: e => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
@@ -662,11 +715,30 @@
             ? [h("span", { className: "btn-spinner", key: "s" }), "Thinking..."]
             : "Send"),
 
+          // Hidden file picker, limited to text files
+          h("input", {
+            type: "file",
+            accept: ".txt,text/plain",
+            ref: fileInput,
+            style: { display: "none" },
+            onChange: loadPromptFile
+          }),
+
+          h("button", {
+            className: "secondary",
+            onClick: () => fileInput.current.click(),
+            disabled: loading
+          }, "Browse..."),
+
           h("button", {
             className: "secondary",
             onClick: clearChat,
             disabled: loading
-          }, "Clear Chat")
+          }, "Clear Chat"),
+
+          fileName && h("span", { className: "file-name" },
+            "Loaded: " + fileName
+          )
         ),
 
         error && h("p", { className: "error" },
